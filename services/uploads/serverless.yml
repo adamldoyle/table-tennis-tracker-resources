@@ -1,0 +1,45 @@
+service: table-tennis-tracker-uploads
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+
+provider:
+  name: aws
+  stage: dev
+  region: us-east-1
+
+resources:
+  Resources:
+    S3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        CorsConfiguration:
+          CorsRules:
+            -
+              AllowedOrigins:
+                - '*'
+              AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - DELETE
+                - HEAD
+              MaxAge: 3000
+
+  Outputs:
+    UploadsBucketArn:
+      Value:
+         Fn::GetAtt:
+          - S3Bucket
+          - Arn
+      Export:
+        Name: ${self:custom.stage}-T3-UploadsBucketArn
+
+    UploadsBucketName:
+      Value:
+        Ref: S3Bucket
+      Export:
+        Name: ${self:custom.stage}-T3-UploadsBucket
+
